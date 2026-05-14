@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第1周 代码核心要点速查</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Microsoft YaHei", "PingFang SC", sans-serif;
+    background: #f0f2f5;
+    color: #1a1a2e;
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ===== 左侧目录侧栏 ===== */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 280px;
+    height: 100vh;
+    background: #1a1a2e;
+    color: #e0e0e0;
+    overflow-y: auto;
+    z-index: 100;
+    border-right: 3px solid #e94560;
+    box-shadow: 2px 0 12px rgba(0,0,0,0.15);
+  }
+  .sidebar-header {
+    padding: 20px 16px 14px;
+    border-bottom: 1px solid #2d2d4a;
+    background: #16213e;
+  }
+  .sidebar-header h1 {
+    font-size: 16px;
+    color: #e94560;
+    letter-spacing: 1px;
+  }
+  .sidebar-header p {
+    font-size: 11px;
+    color: #8899aa;
+    margin-top: 4px;
+  }
+  .sidebar nav { padding: 8px 0; }
+  .sidebar nav a {
+    display: block;
+    padding: 9px 16px 9px 20px;
+    color: #b0b8c8;
+    text-decoration: none;
+    font-size: 13px;
+    border-left: 3px solid transparent;
+    transition: all 0.15s;
+  }
+  .sidebar nav a:hover,
+  .sidebar nav a.active {
+    color: #fff;
+    background: rgba(233,69,96,0.12);
+    border-left-color: #e94560;
+  }
+  .sidebar nav .section-label {
+    padding: 14px 16px 4px 20px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #e94560;
+    font-weight: 600;
+  }
+  .sidebar nav .sub {
+    padding-left: 32px;
+    font-size: 12px;
+  }
+
+  /* ===== 主内容区 ===== */
+  .main {
+    margin-left: 280px;
+    flex: 1;
+    padding: 32px 48px 80px;
+    max-width: 960px;
+  }
+
+  /* ===== 章节标题 ===== */
+  .section {
+    margin-bottom: 40px;
+    scroll-margin-top: 20px;
+  }
+  .section h2 {
+    font-size: 22px;
+    border-left: 5px solid #e94560;
+    padding-left: 14px;
+    margin-bottom: 18px;
+    color: #1a1a2e;
+  }
+  .section h3 {
+    font-size: 17px;
+    color: #16213e;
+    margin: 24px 0 10px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #eaeef2;
+  }
+  .section h4 {
+    font-size: 14px;
+    color: #e94560;
+    margin: 16px 0 6px;
+  }
+
+  /* ===== 代码卡片 ===== */
+  .card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    border: 1px solid #e8ecf0;
+  }
+  .card .file-ref {
+    display: inline-block;
+    background: #1a1a2e;
+    color: #f0c040;
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-family: "Consolas", "Courier New", monospace;
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+
+  pre {
+    background: #1a1a2e;
+    color: #e8e8e8;
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 13px;
+    line-height: 1.55;
+    overflow-x: auto;
+    font-family: "Consolas", "Courier New", monospace;
+    margin: 10px 0 0;
+  }
+  pre .cmt { color: #6a8; }
+  pre .key { color: #f0c040; }
+  pre .str { color: #7ec8e3; }
+  pre .num { color: #d99; }
+  pre .fn  { color: #b39; }
+
+  .tag {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-right: 6px;
+  }
+  .tag-red   { background: #fee2e2; color: #b91c1c; }
+  .tag-yellow{ background: #fef9c3; color: #854d0e; }
+  .tag-gray  { background: #e5e7eb; color: #4b5563; }
+
+  .flow-box {
+    background: #f8fafc;
+    border: 1px dashed #94a3b8;
+    border-radius: 10px;
+    padding: 16px 20px;
+    text-align: center;
+    font-size: 14px;
+    margin: 12px 0;
+  }
+  .flow-box span {
+    display: inline-block;
+    background: #1a1a2e;
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: 6px;
+    margin: 4px 6px;
+    font-size: 13px;
+  }
+  .flow-box .arrow {
+    background: transparent;
+    color: #e94560;
+    font-size: 20px;
+    padding: 0 2px;
+  }
+
+  ul, ol { padding-left: 22px; margin: 8px 0; }
+  li { margin-bottom: 4px; font-size: 14px; line-height: 1.6; }
+
+  .tip {
+    background: #f0fdf4;
+    border-left: 4px solid #22c55e;
+    padding: 12px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    margin: 12px 0;
+  }
+  .warn {
+    background: #fef9c3;
+    border-left: 4px solid #eab308;
+    padding: 12px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    margin: 12px 0;
+  }
+
+  hr { border: none; border-top: 1px solid #e2e8f0; margin: 32px 0; }
+
+  @media (max-width: 768px) {
+    .sidebar { width: 200px; }
+    .main { margin-left: 200px; padding: 20px 20px 60px; }
+    pre { font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== 左侧目录 ===== -->
+<div class="sidebar">
+  <div class="sidebar-header">
+    <h1>第1周 · 核心速查</h1>
+    <p>LLM + Embedded 学习笔记</p>
+  </div>
+  <nav>
+    <div class="section-label">&#9679; 必须看懂</div>
+    <a href="#s1">1. JSON 数据包格式</a>
+    <a href="#s2">2. 非阻塞定时 millis()</a>
+    <a href="#s3">3. 缓冲区模式</a>
+    <a href="#s4">4. 整体数据流</a>
+
+    <div class="section-label">&#9679; 建议看懂</div>
+    <a href="#s5">5. ADC 模拟读取</a>
+    <a href="#s6">6. DHT11 库用法</a>
+    <a href="#s7">7. 串口初始化</a>
+    <a href="#s8">8. 模拟器工作原理</a>
+
+    <div class="section-label">&#9679; 可选了解</div>
+    <a href="#s9" class="sub">9. platformio.ini</a>
+    <a href="#s10" class="sub">10. isnan() 检查</a>
+    <a href="#s11" class="sub">11. 可视化 / 串口读取器</a>
+
+    <div class="section-label">&#9679; 快速参考</div>
+    <a href="#s12" class="sub">常用命令速查</a>
+  </nav>
+</div>
+
+<!-- ===== 主内容 ===== -->
+<div class="main">
+
+  <div class="section" id="s1">
+    <h2>1. JSON 数据包格式 <span class="tag tag-red">必须看懂</span></h2>
+    <div class="card">
+      <div class="file-ref">firmware/esp32_device/src/main.cpp :46-60</div>
+      <p>ESP32 通过串口发出的 <strong>JSON 字符串</strong> 格式如下，<em>所有后续周（云上传、Agent 分析等）都基于这个数据结构</em>。</p>
+      <pre><span class="cmt">// ESP32 构建 JSON 的核心代码</span>
+StaticJsonDocument<256> doc;
+doc[<span class="str">"device_id"</span>] = <span class="str">"esp32_001"</span>;
+doc[<span class="str">"timestamp"</span>] = now;
+
+JsonObject sensors = doc.createNestedObject(<span class="str">"sensors"</span>);
+sensors[<span class="str">"temperature"</span>][<span class="str">"value"</span>] = temperature;
+sensors[<span class="str">"temperature"</span>][<span class="str">"unit"</span>] = <span class="str">"c"</span>;
+sensors[<span class="str">"humidity"</span>][<span class="str">"value"</span>] = humidity;
+sensors[<span class="str">"humidity"</span>][<span class="str">"unit"</span>] = <span class="str">"%"</span>;
+sensors[<span class="str">"light"</span>][<span class="str">"value"</span>] = analogValue;
+sensors[<span class="str">"light"</span>][<span class="str">"unit"</span>] = <span class="str">"raw"</span>;
+
+serializeJson(doc, Serial);  <span class="cmt">// 序列化为 JSON 字符串并发送</span></pre>
+      <p style="margin-top:10px;">实际输出的数据长这样：</p>
+      <pre>{
+  "device_id": "esp32_001",
+  "timestamp": 5000,
+  "sensors": {
+    "temperature": { "value": 25.3, "unit": "c" },
+    "humidity":    { "value": 60.2, "unit": "%" },
+    "light":       { "value": 2048, "unit": "raw" }
+  }
+}</pre>
+      <div class="tip"><strong>理解要点：</strong>
+        <ul style="margin:4px 0 0 16px;">
+          <li><code>device_id</code> — 设备标识，将来多设备时区分数据来源</li>
+          <li><code>timestamp</code> — ESP32 内部的毫秒计时（相对时间）</li>
+          <li><code>sensors</code> — 嵌套对象，每个传感器有 <code>value</code> + <code>unit</code></li>
+          <li>Python 端用 <code>json.loads()</code> 解析后可直接用 <code>data["sensors"]["temperature"]["value"]</code> 取值</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="s2">
+    <h2>2. 非阻塞定时 millis() <span class="tag tag-red">必须看懂</span></h2>
+    <div class="card">
+      <div class="file-ref">firmware/esp32_device/src/main.cpp :34-38</div>
+      <p><strong>嵌入式编程最重要的模式之一</strong>。不能用 <code>delay(5000)</code> 阻塞，否则传感器读取期间 CPU 无法做其他事情。</p>
+      <pre>const unsigned long SEND_INTERVAL = 5000;  <span class="cmt">// 5 秒间隔</span>
+unsigned long lastSendTime = 0;
+
+void loop() {
+  unsigned long now = millis();             <span class="cmt">// 当前开机毫秒数</span>
+
+  if (now - lastSendTime >= SEND_INTERVAL) {
+    lastSendTime = now;                     <span class="cmt">// 更新"上次执行时间"</span>
+    <span class="cmt">// --- 这里执行传感器读取 + 发送 ---</span>
+    float t = dht.readTemperature();
+    // ...
+    serializeJson(doc, Serial);
+    <span class="cmt">// LED 快速闪烁（用 delay(50) 只阻塞 50ms，可接受）</span>
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(50);
+    digitalWrite(LED_BUILTIN, LOW);
+  }
+  <span class="cmt">// 如果没到 5 秒，loop() 会立即返回，继续做其他事</span>
+}</pre>
+      <div class="tip"><strong>类比理解：</strong> 想象你在煮泡面（5分钟），<code>delay(5000)</code> 是盯着计时器一动不动；<code>millis()</code> 模式是设个闹钟，闹钟响之前你可以刷手机（执行其他任务）。</div>
+      <div class="warn"><strong>关键区别：</strong> <code>delay()</code> 阻塞 CPU → 无法响应按钮、无法处理串口数据；<code>millis()</code> 非阻塞 → 每次 <code>loop()</code> 检查一次时间，没到就跳过。</div>
+    </div>
+  </div>
+
+  <div class="section" id="s3">
+    <h2>3. 缓冲区模式 <span class="tag tag-red">必须看懂</span></h2>
+    <div class="card">
+      <div class="file-ref">agent/src/week1_data_collection/data_receiver.py :26-55</div>
+      <p>数据采集系统标准做法：<strong>先攒一批数据在内存里，再一次性写入磁盘</strong>，避免每条数据都触发磁盘 I/O（太慢）。</p>
+      <pre><span class="key">class</span> SensorDataReceiver:
+    <span class="key">def</span> <span class="fn">__init__</span>(self, data_dir):
+        self.buffer = []          <span class="cmt"># 缓冲区：先存内存里</span>
+
+    <span class="key">def</span> <span class="fn">receive_data</span>(self, raw_data):
+        data = json.loads(raw_data)     <span class="cmt"># 解析 JSON</span>
+        data[<span class="str">"timestamp"</span>] = datetime.now().isoformat()  <span class="cmt"># 加接收时间戳</span>
+        self.buffer.append(data)        <span class="cmt"># 放入缓冲区</span>
+        <span class="key">return</span> {<span class="str">"status"</span>: <span class="str">"ok"</span>, <span class="str">"data"</span>: data}
+
+    <span class="key">def</span> <span class="fn">flush_to_disk</span>(self):
+        filename = f<span class="str">"sensor_data_{<span class="fn">...</span>}.json"</span>
+        <span class="key">with</span> open(filename, <span class="str">"w"</span>) as f:
+            json.dump(self.buffer, f, indent=2)  <span class="cmt"># 批量写入</span>
+        count = len(self.buffer)
+        self.buffer.clear()           <span class="cmt"># 清空缓冲区</span>
+        <span class="key">return</span> count</pre>
+      <div class="tip"><strong>理解要点：</strong>
+        <ul style="margin:4px 0 0 16px;">
+          <li><code>buffer</code> 是一个 Python 列表，不断 <code>append()</code> 新数据</li>
+          <li><code>flush_to_disk()</code> 一次性把列表里所有数据写入文件 → 比逐条写入快 10~100 倍</li>
+          <li>文件名带时间戳（如 <code>sensor_data_20260514_180000.json</code>），每次刷新生成新文件</li>
+          <li>写入完成后 <code>buffer.clear()</code> 清空，继续接收下一批</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="s4">
+    <h2>4. 整体数据流 <span class="tag tag-red">必须看懂</span></h2>
+    <div class="card">
+      <p>这是整个 12 周项目的<strong>数据管道基础</strong>，后续每周都在这个管道上添加新功能。</p>
+      <div class="flow-box">
+        <span>物理传感器</span>
+        <span class="arrow">&#8594;</span>
+        <span>ESP32<br><small>ADC 采集</small></span>
+        <span class="arrow">&#8594;</span>
+        <span>JSON<br><small>序列化</small></span>
+        <span class="arrow">&#8594;</span>
+        <span>串口 UART<br><small>115200 baud</small></span>
+        <span class="arrow">&#8594;</span>
+        <span>Python<br><small>解析/缓存</small></span>
+        <span class="arrow">&#8594;</span>
+        <span>JSON 文件<br><small>存磁盘</small></span>
+      </div>
+      <div class="flow-box" style="margin-top:8px; border-color: #e94560;">
+        <span>LLM Agent<br><small>(将来)</small></span>
+        <span class="arrow">&#8592;</span>
+        <span>数据分析<br><small>(将来)</small></span>
+        <span class="arrow">&#8592;</span>
+      </div>
+      <div class="tip"><strong>理解要点：</strong> 数据从传感器物理世界出发 → 经过 ESP32 转换成数字 JSON → 通过串口传给 PC → Python 处理后存为文件。后续第 2 周会在 Python 端加定时任务调度，第 3 周加 MQTT 云上传，第 6 周加 Agent 分析。</div>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="section" id="s5">
+    <h2>5. ADC 模拟读取 <span class="tag tag-yellow">建议看懂</span></h2>
+    <div class="card">
+      <div class="file-ref">firmware/esp32_device/src/main.cpp :15,43</div>
+      <pre><span class="cmt">// 引脚定义</span>
+<span class="key">#define</span> ANALOG_PIN 34      <span class="cmt">// 选用 ADC1（不受 WiFi 影响）</span>
+
+<span class="cmt">// 读取模拟值</span>
+<span class="key">int</span> analogValue = analogRead(ANALOG_PIN);  <span class="cmt">// 返回 0 ~ 4095</span></pre>
+      <div class="tip">
+        <strong>为什么用 GPIO34？</strong> ESP32 的 ADC 分为 ADC1（GPIO32~39）和 ADC2（GPIO0,2,4,12~15,25~27）。<strong>ADC2 会被 WiFi 占用</strong>，所以模拟传感器必须接 ADC1 的引脚。GPIO34 是 ADC1 通道 6。<br><br>
+        <strong>数值范围：</strong> ESP32 是 12 位 ADC，返回值 0~4095。光敏电阻越暗，电压越低，数值越小。
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="s6">
+    <h2>6. DHT11 库用法 <span class="tag tag-yellow">建议看懂</span></h2>
+    <div class="card">
+      <div class="file-ref">firmware/esp32_device/src/main.cpp :9,14,18,29,41-42</div>
+      <pre><span class="key">#include</span> <DHT.h>              <span class="cmt">// DHT 传感器库</span>
+
+<span class="key">#define</span> DHTPIN  4             <span class="cmt">// 数据引脚</span>
+<span class="key">#define</span> DHTTYPE DHT11         <span class="cmt">// 传感器型号：DHT11（也支持 DHT22）</span>
+
+DHT dht(DHTPIN, DHTTYPE);     <span class="cmt">// 创建 DHT 对象</span>
+
+<span class="fn">setup()</span> {
+    dht.begin();              <span class="cmt">// 初始化传感器</span>
+}
+
+<span class="fn">loop()</span> {
+    <span class="key">float</span> humidity    = dht.readHumidity();       <span class="cmt">// 湿度 %</span>
+    <span class="key">float</span> temperature = dht.readTemperature();    <span class="cmt">// 温度 ℃</span>
+}</pre>
+      <table style="width:100%; border-collapse:collapse; margin:10px 0; font-size:13px;">
+        <tr style="background:#1a1a2e; color:#fff;">
+          <th style="padding:6px 10px; text-align:left;">特性</th>
+          <th style="padding:6px 10px; text-align:left;">DHT11</th>
+          <th style="padding:6px 10px; text-align:left;">DHT22</th>
+        </tr>
+        <tr style="border-bottom:1px solid #ddd;">
+          <td style="padding:6px 10px;">温度范围</td>
+          <td style="padding:6px 10px;">0~50 &deg;C</td>
+          <td style="padding:6px 10px;">-40~80 &deg;C</td>
+        </tr>
+        <tr style="border-bottom:1px solid #ddd;">
+          <td style="padding:6px 10px;">精度</td>
+          <td style="padding:6px 10px;">&plusmn;2 &deg;C</td>
+          <td style="padding:6px 10px;">&plusmn;0.5 &deg;C</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 10px;">采样间隔</td>
+          <td style="padding:6px 10px;">1 秒</td>
+          <td style="padding:6px 10px;">2 秒</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="section" id="s7">
+    <h2>7. 串口初始化 <span class="tag tag-yellow">建议看懂</span></h2>
+    <div class="card">
+      <div class="file-ref">firmware/esp32_device/src/main.cpp :25</div>
+      <pre>Serial.begin(115200);  <span class="cmt">// 设置串口波特率</span></pre>
+      <p><strong>波特率</strong> = 每秒传输的比特数。ESP32 和 PC 必须设为<strong>相同值</strong>，否则通信乱码。115200 是常用平衡值（速度够快且稳定）。</p>
+      <div class="warn">常见问题：如果串口输出乱码，先检查两边波特率是否一致！</div>
+    </div>
+  </div>
+
+  <div class="section" id="s8">
+    <h2>8. 模拟器工作原理 <span class="tag tag-yellow">建议看懂</span></h2>
+    <div class="card">
+      <div class="file-ref">agent/src/week1_data_collection/simulate_esp32.py :36-60</div>
+      <p>模拟器在<strong>没有真实 ESP32 硬件</strong>时生成模拟数据，输出格式与真实硬件完全一致。</p>
+      <pre><span class="key">def</span> <span class="fn">read_sensors</span>(self):
+    <span class="cmt"># 在上次值的基础上加随机波动</span>
+    self.temperature += random.uniform(-0.3, 0.3)
+    self.humidity    += random.uniform(-1.0, 1.0)
+    self.light       += random.randint(-100, 100)
+
+    <span class="cmt"># 限制在合理范围内</span>
+    self.temperature = max(15, min(35, self.temperature))
+    self.humidity    = max(30, min(80, self.humidity))
+    self.light       = max(0, min(4095, self.light))
+
+    <span class="key">return</span> {<span class="str">"temperature"</span>: {<span class="str">"value"</span>: round(self.temperature,1), <span class="str">"unit"</span>: <span class="str">"c"</span>},
+            <span class="str">"humidity"</span>:    {<span class="str">"value"</span>: round(self.humidity,1),    <span class="str">"unit"</span>: <span class="str">"%"</span>},
+            <span class="str">"light"</span>:       {<span class="str">"value"</span>: self.light,              <span class="str">"unit"</span>: <span class="str">"raw"</span>}}</pre>
+      <div class="tip"><strong>为什么需要模拟器？</strong> 第1周学习时你可能还没有 ESP32 开发板。模拟器在 PC 上生成<strong>一模一样的 JSON 格式</strong>，让你可以完整测试 Python 端的接收、存储、可视化代码。等拿到硬件后，只需把模拟器换成 <code>serial_reader.py</code> 即可。</div>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="section" id="s9">
+    <h2>9. platformio.ini 配置 <span class="tag tag-gray">可选了解</span></h2>
+    <div class="card">
+      <div class="file-ref">firmware/esp32_device/platformio.ini</div>
+      <pre>[platformio]
+default_envs = esp32dev
+
+[env:esp32dev]
+platform = espressif32
+board = esp32dev
+framework = arduino
+monitor_speed = 115200
+lib_deps =
+    bblanchon/ArduinoJson @ ^7.3.0
+    adafruit/DHT sensor library @ ^1.4.6
+    adafruit/Adafruit Unified Sensor @ ^1.1.14
+
+[env:esp32dev-idf]
+platform = espressif32
+board = esp32dev
+framework = espidf</pre>
+      <p>两个环境：<code>esp32dev</code>（Arduino框架，简单易用，初学者推荐）和 <code>esp32dev-idf</code>（ESP-IDF 原生框架，更灵活但更复杂）。</p>
+    </div>
+  </div>
+
+  <div class="section" id="s10">
+    <h2>10. isnan() 检查 <span class="tag tag-gray">可选了解</span></h2>
+    <div class="card">
+      <div class="file-ref">firmware/esp32_device/src/main.cpp :52</div>
+      <pre><span class="key">if</span> (!isnan(humidity) && !isnan(temperature)) {
+    <span class="cmt">// 读取有效才发送温度/湿度</span>
+}</pre>
+      <p>DHT11 有时会读取失败（返回 <code>NaN</code>），用 <code>isnan()</code> 判断数据是否有效，避免把无效数据发送出去。</p>
+    </div>
+  </div>
+
+  <div class="section" id="s11">
+    <h2>11. 可视化 / 串口读取器 <span class="tag tag-gray">可选了解</span></h2>
+    <div class="card">
+      <p>这两个工具<strong>用到时再查</strong>即可，目前不需要深入理解：</p>
+      <ul>
+        <li><strong><code>visualize_data.py</code></strong> — 用 matplotlib 把 JSON 文件里的温湿度、光照画成折线图。后续分析数据时会用到。</li>
+        <li><strong><code>serial_reader.py</code></strong> — 连接真实 ESP32 硬件时用，通过 <code>pyserial</code> 库读取串口数据。没有硬件前可以跳过。</li>
+      </ul>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="section" id="s12">
+    <h2>常用命令速查</h2>
+    <div class="card">
+      <table style="width:100%; border-collapse:collapse; font-size:13px;">
+        <tr style="background:#1a1a2e; color:#fff;">
+          <th style="padding:8px 12px; text-align:left;">操作</th>
+          <th style="padding:8px 12px; text-align:left;">命令</th>
+        </tr>
+        <tr style="border-bottom:1px solid #ddd;">
+          <td style="padding:8px 12px;">运行模拟器</td>
+          <td style="padding:8px 12px;"><code>F:\Anaconda3\envs\llm_embedded\python.exe -X utf8 agent/src/week1_data_collection/simulate_esp32.py</code></td>
+        </tr>
+        <tr style="border-bottom:1px solid #ddd;">
+          <td style="padding:8px 12px;">编译 ESP32 固件</td>
+          <td style="padding:8px 12px;"><code>pio run -e esp32dev</code>（在 firmware/esp32_device 目录下）</td>
+        </tr>
+        <tr style="border-bottom:1px solid #ddd;">
+          <td style="padding:8px 12px;">上传固件到 ESP32</td>
+          <td style="padding:8px 12px;"><code>pio run -e esp32dev -t upload</code></td>
+        </tr>
+        <tr style="border-bottom:1px solid #ddd;">
+          <td style="padding:8px 12px;">串口监视器</td>
+          <td style="padding:8px 12px;"><code>pio device monitor -b 115200</code></td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px;">数据可视化</td>
+          <td style="padding:8px 12px;"><code>python -X utf8 agent/src/week1_data_collection/visualize_data.py</code></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
