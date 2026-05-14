@@ -1,0 +1,92 @@
+[
+  {
+    "device_id": "esp32_001",
+    "timestamp": "2026-05-14T13:33:06.190820",
+    "sensors": {
+      "temperature": {
+        "value": 24.9,
+        "unit": "c"
+      },
+      "humidity": {
+        "value": 55.4,
+        "unit": "%"
+      },
+      "light": {
+        "value": 1990,
+        "unit": "raw"
+      }
+    }
+  },
+  {
+    "device_id": "esp32_001",
+    "timestamp": "2026-05-14T13:33:07.191342",
+    "sensors": {
+      "temperature": {
+        "value": 24.7,
+        "unit": "c"
+      },
+      "humidity": {
+        "value": 56.0,
+        "unit": "%"
+      },
+      "light": {
+        "value": 1928,
+        "unit": "raw"
+      }
+    }
+  },
+  {
+    "device_id": "esp32_001",
+    "timestamp": "2026-05-14T13:33:08.191359",
+    "sensors": {
+      "temperature": {
+        "value": 24.7,
+        "unit": "c"
+      },
+      "humidity": {
+        "value": 55.2,
+        "unit": "%"
+      },
+      "light": {
+        "value": 1906,
+        "unit": "raw"
+      }
+    }
+  },
+  {
+    "device_id": "esp32_001",
+    "timestamp": "2026-05-14T13:33:09.192037",
+    "sensors": {
+      "temperature": {
+        "value": 24.5,
+        "unit": "c"
+      },
+      "humidity": {
+        "value": 55.6,
+        "unit": "%"
+      },
+      "light": {
+        "value": 1885,
+        "unit": "raw"
+      }
+    }
+  },
+  {
+    "device_id": "esp32_001",
+    "timestamp": "2026-05-14T13:33:10.192417",
+    "sensors": {
+      "temperature": {
+        "value": 24.3,
+        "unit": "c"
+      },
+      "humidity": {
+        "value": 56.1,
+        "unit": "%"
+      },
+      "light": {
+        "value": 1826,
+        "unit": "raw"
+      }
+    }
+  }
+]
