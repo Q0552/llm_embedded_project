@@ -1,0 +1,20 @@
+[
+  {
+    "sensor": "temperature",
+    "value": 25.6,
+    "unit": "c",
+    "timestamp": "2026-05-14T13:08:41.122158"
+  },
+  {
+    "sensor": "humidity",
+    "value": 60.2,
+    "unit": "%",
+    "timestamp": "2026-05-14T13:08:41.224349"
+  },
+  {
+    "sensor": "pressure",
+    "value": 1013.25,
+    "unit": "hPa",
+    "timestamp": "2026-05-14T13:08:41.325050"
+  }
+]

@@ -1,0 +1,36 @@
+# LLM + 嵌入式智能体项目依赖
+# Python 3.10+
+
+# LLM / AI 框架
+openai>=1.0.0
+langchain>=1.0.0
+langchain-community>=0.4.0
+langchain-openai>=1.0.0
+transformers>=4.30.0
+accelerate>=0.20.0
+sentence-transformers>=2.2.0
+
+# 数据处理
+numpy>=1.24.0
+pandas>=2.0.0
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
+
+# 网络通信
+requests>=2.28.0
+httpx>=0.24.0
+paho-mqtt>=1.6.0
+websocket-client>=1.0.0
+
+# 序列化
+pyyaml>=6.0
+python-dotenv>=1.0.0
+
+# 工具
+jupyter>=1.0.0
+matplotlib>=3.7.0
+rich>=13.0.0
+
+# 测试
+pytest>=7.0.0
+pytest-asyncio>=0.21.0

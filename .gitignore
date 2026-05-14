@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+venv/
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# PlatformIO
+firmware/esp32_device/.pio/
+firmware/esp32_device/.pioenvs/
+firmware/esp32_device/.piolibdeps/
+
+# ESP-IDF
+firmware/esp32_device/build/
+firmware/esp32_device/sdkconfig
+firmware/esp32_device/sdkconfig.old
+
+# STM32CubeIDE
+firmware/stm32_device/Debug/
+firmware/stm32_device/Release/
+firmware/stm32_device/.settings/
+
+# Wokwi
+.wokwi/diagram.json
+.wokwi/wokwi.toml
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# Compiled
+*.o
+*.elf
+*.bin
+*.hex
+*.map
